@@ -1,0 +1,16 @@
+clusters:
+  production-cluster:
+    url: https://alertmanager-main-openshift-monitoring.apps.prod.example.com
+    token: sha256~your-token-here
+    severity: [critical, warning]
+  
+  staging-cluster:
+    url: https://alertmanager-main-openshift-monitoring.apps.staging.example.com
+    token: sha256~your-token-here
+    severity: [critical, warning]
+  
+  development-cluster:
+    url: https://alertmanager-main-openshift-monitoring.apps.dev.example.com
+    token: sha256~your-token-here
+    severity: [critical]
+

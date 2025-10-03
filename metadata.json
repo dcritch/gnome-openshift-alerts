@@ -1,0 +1,11 @@
+{
+  "name": "OpenShift Alerts",
+  "description": "Display OpenShift cluster alerts in the GNOME Shell panel",
+  "uuid": "openshift-alerts@dcritch.github.com",
+  "shell-version": [
+    "48"
+  ],
+  "version": 1,
+  "url": "https://github.com/dcritch/gnome-openshift-alerts"
+}
+

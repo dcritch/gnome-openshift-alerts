@@ -1,0 +1,16 @@
+/* Stylesheet for OpenShift Alerts Extension */
+
+.openshift-alerts-box {
+    spacing: 6px;
+}
+
+.openshift-alerts-label {
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+.popup-menu-item {
+    padding: 4px 8px;
+    font-size: 10pt;
+}
+
