@@ -187,7 +187,45 @@ clusters:
 
 ### SSL Certificate Issues
 
-The extension uses `ssl_strict: false` to handle self-signed certificates. If you need stricter SSL validation, modify the `Soup.Session` configuration in `extension.js`.
+By default, the extension accepts all SSL certificates, including self-signed ones. This is configured in `extension.js` using libsoup3's `accept-certificate` signal handler.
+
+**To disable SSL verification (current default):**
+
+The extension currently includes this code in the `_fetchAlertsForCluster` method:
+
+```javascript
+// Accept all certificates (including self-signed)
+message.connect('accept-certificate', () => {
+    return true;
+});
+```
+
+**To enable strict SSL verification:**
+
+Remove or comment out the `accept-certificate` signal handler in `extension.js`:
+
+```javascript
+// Strict SSL verification - comment out or remove this block:
+// message.connect('accept-certificate', () => {
+//     return true;
+// });
+```
+
+Alternatively, you can make it conditional based on certificate validation:
+
+```javascript
+// Only accept valid certificates or specific self-signed ones
+message.connect('accept-certificate', (message, cert, errors) => {
+    // Log the certificate errors for debugging
+    log(`Certificate errors: ${errors}`);
+    
+    // Return false to enforce strict SSL verification
+    // Return true to accept the certificate
+    return false;  // Change to 'true' to accept self-signed certs
+});
+```
+
+After modifying the code, restart GNOME Shell or re-enable the extension for changes to take effect.
 
 ## Development
 
