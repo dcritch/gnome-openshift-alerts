@@ -2,6 +2,8 @@
 
 A GNOME Shell extension that displays OpenShift cluster alerts in your desktop panel. This extension monitors multiple OpenShift clusters and provides real-time alert notifications.
 
+![screenshot](gnome-openshift-alerts.png)
+
 ## Features
 
 - 🟢 **Visual Status Indicator**: Shows overall cluster health at a glance
@@ -253,19 +255,6 @@ gnome-extensions disable openshift-alerts@dcritch.github.com
 gnome-extensions enable openshift-alerts@dcritch.github.com
 ```
 
-## Comparison with Python Script
-
-This extension provides the same core functionality as `ocp-alerts.py` but integrated into GNOME Shell:
-
-- ✅ Multi-cluster support
-- ✅ Configurable severity filtering
-- ✅ Status indicator
-- ✅ Alert details
-- ✅ Auto-refresh
-- ✅ Error handling for unreachable clusters
-
-The main difference is the user interface - the extension provides a native GNOME Shell panel indicator instead of a command-line output.
-
 ## License
 
 MIT License - Feel free to modify and distribute as needed.
@@ -276,7 +265,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Related Projects
 
-- Python script: `ocp-alerts.py` (command-line version)
+- Original Argos Python script: [ocp-alerts.py](https://github.com/dcritch/argos-ocp-alerts)
 - OpenShift Documentation: https://docs.openshift.com/
 
 ## Changelog
