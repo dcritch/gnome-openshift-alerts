@@ -36,7 +36,70 @@ cp metadata.json extension.js stylesheet.css \
    ~/.local/share/gnome-shell/extensions/openshift-alerts@dcritch.github.com/
 ```
 
-### 2. Configure Clusters
+### 2. RBAC
+
+The extension requires a valid OpenShift API token to access the cluster. To keep things simple, create a service account with AlertManager access, and generate a token:
+
+```bash
+cat << EOF | oc apply -f -
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ocp-alerts
+  namespace: openshift-monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ocp-alerts
+  namespace: openshift-monitoring
+rules:
+- apiGroups:
+  - monitoring.coreos.com
+  resourceNames:
+  - main
+  resources:
+  - alertmanagers/api
+  verbs:
+  - 'list'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ocp-alerts
+  namespace: openshift-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: monitoring-alertmanager-edit
+subjects:
+- kind: ServiceAccount
+  name: ocp-alerts
+  namespace: openshift-monitoring
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ocp-alerts
+  namespace: openshift-monitoring
+  annotations:
+    kubernetes.io/service-account.name: "ocp-alerts"
+type: kubernetes.io/service-account-token
+EOF
+serviceaccount/ocp-alerts created
+role.rbac.authorization.k8s.io/ocp-alerts created
+rolebinding.rbac.authorization.k8s.io/ocp-alerts created
+secret/ocp-alerts created
+```
+
+To retrieve the token:
+
+```bash
+oc get secret ocp-alerts -n openshift-monitoring -o jsonpath='{.data.token}' | base64 --decode
+```
+
+### 3. Configure Clusters
 
 Create the configuration directory and file:
 
@@ -51,35 +114,14 @@ Edit `~/.config/ocp-alerts/clusters.yaml` with your cluster information:
 clusters:
   my-cluster:
     url: https://alertmanager-main-openshift-monitoring.apps.mycluster.example.com
-    token: sha256~YOUR_TOKEN_HERE
+    token: <service-account-token>
     severity: [critical, warning]
 ```
 
-#### Getting Your OpenShift Token
+> **_NOTE_** The AlertManager URL can be discovered by `oc get route alertmanager-main -n openshift-monitoring -o jsonpath='{.spec.host}'`
 
-To get an API token from your OpenShift cluster:
 
-```bash
-# Login to your cluster
-oc login https://api.mycluster.example.com:6443
-
-# Get your token
-oc whoami -t
-```
-
-#### Finding the Alertmanager URL
-
-The Alertmanager URL typically follows this pattern:
-```
-https://alertmanager-main-openshift-monitoring.apps.<cluster-domain>
-```
-
-You can find it with:
-```bash
-oc get route alertmanager-main -n openshift-monitoring -o jsonpath='{.spec.host}'
-```
-
-### 3. Enable the Extension
+### 4. Enable the Extension
 
 After copying the files and configuring your clusters:
 
