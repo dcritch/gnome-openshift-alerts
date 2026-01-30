@@ -87,10 +87,6 @@ metadata:
     kubernetes.io/service-account.name: "ocp-alerts"
 type: kubernetes.io/service-account-token
 EOF
-serviceaccount/ocp-alerts created
-role.rbac.authorization.k8s.io/ocp-alerts created
-rolebinding.rbac.authorization.k8s.io/ocp-alerts created
-secret/ocp-alerts created
 ```
 
 To retrieve the token:
