@@ -29,9 +29,8 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
         });
         
         // Load OpenShift icon from SVG file
-        const ext = Extension.lookupByURL(import.meta.url);
         const file =
-            ext.dir.resolve_relative_path(`icons/openshift.svg`);
+            extension.dir.resolve_relative_path(`icons/openshift.svg`);
         this._icon = new St.Icon({
             gicon: new Gio.FileIcon({file}),
             icon_size: 20,
