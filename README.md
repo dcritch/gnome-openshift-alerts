@@ -77,23 +77,16 @@ subjects:
 - kind: ServiceAccount
   name: ocp-alerts
   namespace: openshift-monitoring
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ocp-alerts
-  namespace: openshift-monitoring
-  annotations:
-    kubernetes.io/service-account.name: "ocp-alerts"
-type: kubernetes.io/service-account-token
 EOF
 ```
 
-To retrieve the token:
+Then to generate a token:
 
 ```bash
-oc get secret ocp-alerts -n openshift-monitoring -o jsonpath='{.data.token}' | base64 --decode
+oc create token ocp-alerts --duration=$((365*24))h
 ```
+
+NOTE: This will create a token that is valid for a year. Alter the `--duration` argument for a token of different length.
 
 ### 3. Configure Clusters
 
