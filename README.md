@@ -6,7 +6,7 @@ A GNOME Shell extension that displays OpenShift cluster alerts in your desktop p
 
 ## Features
 
-- 🟢 **Visual Status Indicator**: Shows overall cluster health at a glance
+- **Visual Status Indicator**: Shows overall cluster health at a glance
   - 🟢 Green: All clusters healthy
   - 🟡 Yellow: One or more clusters unreachable
   - 🔴 Red: Active alerts detected
@@ -17,9 +17,9 @@ A GNOME Shell extension that displays OpenShift cluster alerts in your desktop p
 
 ## Requirements
 
-- GNOME Shell 48
+- GNOME Shell 48+
 - OpenShift cluster access with valid API tokens
-- Network connectivity to cluster Alertmanager endpoints
+- Network connectivity to the cluster's Alertmanager endpoints
 
 ## Installation
 
@@ -300,6 +300,10 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 - OpenShift Documentation: https://docs.openshift.com/
 
 ## Changelog
+
+### Version 1.1
+- Use a file for the icon rather than an embedded SVG
+- Testing and working under GNOME Shell 49
 
 ### Version 1.0
 - Initial release
