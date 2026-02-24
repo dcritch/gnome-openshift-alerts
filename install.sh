@@ -16,7 +16,7 @@ mkdir -p "$EXTENSION_DIR"
 
 # Copy extension files
 echo "Copying extension files..."
-cp metadata.json extension.js stylesheet.css "$EXTENSION_DIR/"
+cp -r metadata.json extension.js stylesheet.css icons "$EXTENSION_DIR/"
 
 echo "Extension files installed to: $EXTENSION_DIR"
 
