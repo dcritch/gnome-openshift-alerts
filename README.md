@@ -18,23 +18,21 @@ A GNOME Shell extension that displays OpenShift cluster alerts in your desktop p
 ## Requirements
 
 - GNOME Shell 48+
-- OpenShift cluster access with valid API tokens
+- OpenShift cluster access with valid API tokens (see RBAC section below)
 - Network connectivity to the cluster's Alertmanager endpoints
 
 ## Installation
 
 ### 1. Install the Extension
 
-Copy the extension files to your GNOME Shell extensions directory:
+The extension can be installed via the GNOME Extensions manager, or via a web browser @ https://extensions.gnome.org/extension/9326/openshift-alerts/.
+
+Alternatively, it can be installed from this repo:
 
 ```bash
-# Create the extension directory
-mkdir -p ~/.local/share/gnome-shell/extensions/openshift-alerts@dcritch.github.com
-
-# Copy extension files
-cp metadata.json extension.js stylesheet.css \
-   ~/.local/share/gnome-shell/extensions/openshift-alerts@dcritch.github.com/
+./install.sh
 ```
+
 
 ### 2. RBAC
 
