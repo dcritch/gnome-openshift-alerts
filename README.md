@@ -299,6 +299,9 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Changelog
 
+### Version 1.2
+- Testing and working under GNOME Shell 50
+
 ### Version 1.1
 - Use a file for the icon rather than an embedded SVG
 - Testing and working under GNOME Shell 49
