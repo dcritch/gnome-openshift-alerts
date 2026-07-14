@@ -4,9 +4,10 @@
   "uuid": "openshift-alerts@dcritch.github.com",
   "shell-version": [
     "48",
-    "49"
+    "49",
+    "50"
   ],
-  "version": 1.1,
+  "version": 1.2,
   "url": "https://github.com/dcritch/gnome-openshift-alerts"
 }
 
