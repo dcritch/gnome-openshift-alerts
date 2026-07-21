@@ -85,7 +85,7 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
             const file = Gio.File.new_for_path(configPath);
             file.load_contents_async(this._cancellable, (sourceObject, result) => {
                 try {
-                    const [contents] = sourceObject.load_contents_finish(result);
+                    const [, contents] = sourceObject.load_contents_finish(result);
                     const configText = new TextDecoder().decode(contents);
                     this._clusters = this._parseYaml(configText);
                 } catch (e) {
