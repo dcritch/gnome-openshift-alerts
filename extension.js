@@ -19,6 +19,7 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
         
         this._extension = extension;
         this._clusters = {};
+        this._cancellable = new Gio.Cancellable();
         this._httpSession = new Soup.Session({
             timeout: 2
         });
@@ -58,10 +59,9 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
         });
         this.menu.addMenuItem(refreshItem);
         
-        // Initial load
+        // Initial load (async — triggers first refresh when config is ready)
         this._loadConfig();
-        this._refreshAlerts();
-        
+
         // Setup auto-refresh timer
         this._timeout = GLib.timeout_add_seconds(
             GLib.PRIORITY_DEFAULT,
@@ -81,17 +81,22 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
                 'ocp-alerts',
                 'clusters.yaml'
             ]);
-            
+
             const file = Gio.File.new_for_path(configPath);
-            const [success, contents] = file.load_contents(null);
-            
-            if (success) {
-                const configText = new TextDecoder().decode(contents);
-                this._clusters = this._parseYaml(configText);
-            } else {
-                log('OpenShift Alerts: Could not read config file');
-                this._clusters = {};
-            }
+            file.load_contents_async(this._cancellable, (sourceObject, result) => {
+                try {
+                    const [contents] = sourceObject.load_contents_finish(result);
+                    const configText = new TextDecoder().decode(contents);
+                    this._clusters = this._parseYaml(configText);
+                } catch (e) {
+                    if (this._cancellable.is_cancelled())
+                        return;
+                    log(`OpenShift Alerts: Error loading config: ${e.message}`);
+                    this._clusters = {};
+                }
+                if (!this._cancellable.is_cancelled())
+                    this._refreshAlerts();
+            });
         } catch (e) {
             log(`OpenShift Alerts: Error loading config: ${e.message}`);
             this._clusters = {};
@@ -152,25 +157,22 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
         const message = Soup.Message.new('GET', alertsUrl);
         message.request_headers.append('Authorization', `Bearer ${cluster.token}`);
         
-        // Accept all certificates (including self-signed)
-        message.connect('accept-certificate', () => {
-            return true;
-        });
-        
+        const handlerId = message.connect('accept-certificate', () => true);
+
         this._httpSession.send_and_read_async(
             message,
             GLib.PRIORITY_DEFAULT,
-            null,
+            this._cancellable,
             (session, result) => {
+                message.disconnect(handlerId);
                 try {
                     const bytes = session.send_and_read_finish(result);
                     const decoder = new TextDecoder('utf-8');
                     const responseText = decoder.decode(bytes.get_data());
-                    
+
                     if (message.status_code === 200) {
                         const alerts = JSON.parse(responseText);
-                        
-                        // Filter alerts by severity and status
+
                         cluster.alerts = alerts.filter(alert => {
                             return cluster.severity.includes(alert.labels.severity) &&
                                    alert.status.state !== 'suppressed';
@@ -189,6 +191,8 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
                         }];
                     }
                 } catch (e) {
+                    if (this._cancellable.is_cancelled())
+                        return;
                     cluster.reachable = false;
                     cluster.alerts = [{
                         labels: {
@@ -200,8 +204,9 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
                         }
                     }];
                 }
-                
-                this._updateUI();
+
+                if (!this._cancellable.is_cancelled())
+                    this._updateUI();
             }
         );
     }
@@ -307,6 +312,8 @@ class OpenshiftAlertsIndicator extends PanelMenu.Button {
             GLib.source_remove(this._timeout);
             this._timeout = null;
         }
+        this._cancellable.cancel();
+        this._httpSession.abort();
         super.destroy();
     }
 });
